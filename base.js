@@ -398,7 +398,7 @@ function loadChat(chatId) {
 function showEmptyState() {
     chatContainer.innerHTML = `
         <div class="empty-state">
-            <h2>🏠 DarkoAI 🏠</h2>
+            <h2>✨ DarkoAI ✨</h2>
             <p>¡Hola! 😂 ¿En qué puedo ayudarte hoy?</p>
             <div class="suggestions">
                 <div class="suggestion-card" onclick="useSuggestion('Crea un plugin de PMMP para comandos personalizados')">
