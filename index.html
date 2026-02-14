@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+    <title>DarkoAI - Asistente Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="highlightThemeDark">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="highlightThemeLight" disabled>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <button class="close-modal">×</button>
+        <img id="modalImage" src="" alt="Vista completa">
+    </div>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="header-top">
+                <div class="logo">DarkoAI</div>
+                <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar tema">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+            <button class="new-chat-btn" onclick="createNewChat()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nuevo Chat
+            </button>
+        </div>
+        <div class="chats-list" id="chatsList"></div>
+        <div class="sidebar-footer">
+            <button class="settings-btn" onclick="openSettings()" title="Ajustes">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m5.66-13.66L15 8.66m-6 6L6.34 17.66M23 12h-6m-6 0H1m17.66 5.66L15 15.34m-6-6L6.34 6.34"></path>
+                </svg>
+                <span>Ajustes</span>
+            </button>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="mobile-header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="logo">DarkoAI</div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        <div class="chat-container" id="chatContainer"></div>
+
+        <!-- ✅ ÁREA DE ENTRADA FIJA -->
+        <div class="input-area-fixed">
+            <div class="input-container">
+                <div class="image-preview-area" id="imagePreviewArea"></div>
+                
+                <!-- ✅ TEXTO ARRIBA -->
+                <textarea id="userInput" placeholder="(escribir texto)" rows="1"></textarea>
+                
+                <!-- ✅ BOTONES DEBAJO -->
+                <div class="action-bar">
+                    <div class="left-actions">
+                        <button class="action-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="Adjuntar archivo">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                            </svg>
+                        </button>
+                        <button class="action-btn" id="imageBtn" onclick="document.getElementById('fileInput').click(); document.getElementById('fileInput').accept='image/*'" title="Adjuntar imagen">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button class="action-btn search-btn" id="searchToggleBtn" onclick="toggleWebSearch()" title="Activar búsqueda web">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="right-actions">
+                        <div class="model-selector">
+                            <select id="modelSelect" class="model-select">
+                                <option value="llama-3.3-70b-versatile">Llama 3.3 70B</option>
+                                <option value="llama-3.1-8b-instant">Llama 3.1 8B</option>
+                                <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                                <option value="gemma2-9b-it">Gemma 2 9B</option>
+                            </select>
+                        </div>
+                        <button class="info-models-btn" onclick="openModelsModal()" title="Información de modelos">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <circle cx="12" cy="8" r="1" fill="currentColor"></circle>
+                            </svg>
+                        </button>
+                        <button id="sendButton" class="send-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                            Enviar
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none">
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-modal" id="settingsModal" onclick="closeSettings(event)">
+        <div class="settings-content" onclick="event.stopPropagation()">
+            <div class="settings-header">
+                <h2>⚙️ Ajustes</h2>
+                <button class="close-btn" onclick="closeSettings()">×</button>
+            </div>
+            <div class="settings-body">
+                <div class="setting-item">
+                    <label>🔍 Búsqueda Web</label>
+                    <p class="setting-description">Activa o desactiva la búsqueda web automática</p>
+                    <button class="toggle-btn" id="webSearchToggle" onclick="toggleWebSearchSetting()">
+                        <span class="toggle-indicator"></span>
+                    </button>
+                </div>
+                <div class="setting-item">
+                    <label>🧠 Modo Aprendizaje</label>
+                    <p class="setting-description">Permite que la IA aprenda de tus preferencias</p>
+                    <button class="toggle-btn" id="learningToggle" onclick="toggleLearningSetting()">
+                        <span class="toggle-indicator"></span>
+                    </button>
+                </div>
+                <div class="setting-item">
+                    <label>🐢 Modo Habla Lenta</label>
+                    <p class="setting-description">Hace que la animación de escritura sea más lenta</p>
+                    <button class="toggle-btn" id="slowTalkToggle" onclick="toggleSlowTalkSetting()">
+                        <span class="toggle-indicator"></span>
+                    </button>
+                </div>
+                <div class="setting-item">
+                    <label>🌓 Tema</label>
+                    <p class="setting-description">Cambiar entre modo oscuro y claro</p>                    <button class="toggle-btn" id="themeToggle" onclick="toggleTheme()">
+                        <span class="toggle-indicator"></span>
+                    </button>
+                </div>
+                <div class="setting-item">
+                    <label>🗑️ Borrar todos los chats</label>
+                    <p class="setting-description">Elimina todo el historial de conversaciones</p>
+                    <button class="danger-btn" onclick="clearAllChats()">Borrar Todo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="models-modal" id="modelsModal" onclick="closeModelsModal(event)">
+        <div class="models-content" onclick="event.stopPropagation()">
+            <div class="models-header">
+                <h2>🤖 Información de Modelos</h2>
+                <button class="close-btn" onclick="closeModelsModal()">×</button>
+            </div>
+            <div class="models-body" id="modelsList"></div>
+        </div>
+    </div>
+
+    <script src="base.js"></script>
+</body>
+  </html>
